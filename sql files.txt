@@ -1,0 +1,2047 @@
+1.
+create database cars;
+use cars;
+create table BMW (
+modelnumber int not null auto_increment primary key,
+modelname varchar(255) not null,
+colour varchar(255) not null
+) auto_increment = 101;
+
+insert into BMW (modelname,colour) values
+("X1","Blue"),
+("X2","Balck"),
+("A1","White");
+
+create table Audi (
+modelnumber int not null auto_increment primary key,
+modelname varchar(255) not null,
+colour varchar(255) not null
+) auto_increment=201;
+
+insert into Audi (modelname,colour) values
+("B6","Green"),
+("AUX4","Blue");
+
+Select * from BMW;
+ 
+Select modelname from BMW;
+
+Select * from Audi;
+
+Select * from BMW,Audi;
+
+
+create table Suzuki (
+modelnumber int not null auto_increment primary key,
+modelname varchar(255) not null ,
+colour varchar(255) not null
+) auto_increment=301;
+
+insert into Suzuki(modelname,colour) values
+("Creta","White"),
+("I10","Green");
+
+Select * from suzuki;
+
+alter table Suzuki
+add price varchar(15);
+
+update suzuki
+set price="1000000"
+where modelnumber=301;
+
+alter table Audi
+add price varchar(10);
+
+update Audi
+set price="1500000"
+where modelnumber=202;
+
+update audi
+set price="25000000"
+where modelnumber=201;
+
+alter table BMW
+add price varchar(10);
+
+insert into BMW(modelname,colour,price) values
+("C1","yellow","2100000"),
+("D1","red","5100000");
+
+select * from bmw;
+
+update BMW 
+set price="4100000"
+where modelnumber=101;
+
+update bmw
+set price = "1200000"
+where modelnumber=102;
+
+update bmw
+set price="4100000"
+where modelnumber=103;
+select count(*) from BMW; 
+select max(price) from BMW;
+select avg(price) from Audi;
+select modelname,price from bmw where price> 2200000 ;
+select distinct colour from BMW;
+select distinct colour from Audi;
+
+select concat(lower(modelnumber),'-',upper(modelname)) as numbername from BMW;
+
+select * from BMW order by price desc;
+
+insert into audi(modelname,colour,price) values
+("U1","grey","1234000"),
+("m1","purple","2100000");
+
+describe bmw;
+
+SELECT 
+modelnumber,
+modelname,
+colour,
+if(colour="blue",'yeah','no')
+as blue_colour
+from bmw;
+
+insert into audi(modelname,colour,price) values
+("f1","grey","0"),
+("f2","purple","");
+
+ select modelnumber,modelname,price,
+ if(price >2000000,"over priced",
+ if(price >=1500000,"correct priced","low priced")
+ )
+ from audi;
+ 
+ select modelnumber,modelname,price,colour,
+ if(price>=1000000 and colour="purple",
+ "favorite","not fav") as fav_or_not
+ from audi;
+ 
+  select modelnumber,modelname,price,
+  ifnull(price,0)
+  from audi;
+  
+  select modelnumber,modelname,price
+  from bmw
+  where price > (
+  select avg(price) 
+  from bmw);
+ 
+ select modelnumber,
+ modelname,
+ price,
+ (select max(price)from bmw) as max_price from bmw
+ where price > ( select avg(price) from bmw ) ;
+ 
+ select 
+ modelnumber,
+ modelname,
+ price 
+ from bmw,
+ (select sum(price) from bmw) as total_price from bmw
+ where (select sum(price) from bmw) > (select max(price) from bmw) ;
+ 
+ SELECT 
+    modelnumber,
+    modelname,
+    price,
+    (SELECT SUM(price) FROM bmw) AS total_price
+FROM bmw
+WHERE (SELECT SUM(price) FROM bmw) > (SELECT MAX(price) FROM bmw);
+
+ SELECT 
+    modelnumber,
+    modelname,
+    price,
+if ( 
+(SELECT SUM(price) FROM bmw) > (SELECT MAX(price) FROM bmw),
+'sum big','max big') as costliest from bmw;
+
+ select modelnumber,modelname,price
+ from audi
+ where (select avg(price) from audi) < ( select max(price) from audi);
+ 
+select m1.modelnumber,m1.modelname,m1.modelcolour,m1.price
+from bmw m1
+where m1.price >  (
+select avg(m2.price)
+from bmw m2
+where m1.price= m2.price);
+
+create table bmw_audi (
+map_id int not null auto_increment primary key,
+bmw_model int not null,
+audi_model int not null,
+foreign key (bmw_model) references bmw(modelnumber),
+foreign key (audi_model) references audi(modelnumber)
+);
+insert into bmw_audi(bmw_model,audi_model) values
+(101,201),
+(102,202),
+(103,203),
+(104,204),
+(105,205);
+
+select * from bmw_audi;
+
+select modelnumber,
+       modelname,
+       colour,
+       price
+from audi 
+where price < (
+select max(price) as max_price 
+from audi );
+
+select modelnumber,
+       modelname,
+       colour,
+       price
+from audi 
+group by price
+having colour = "blue";
+
+SELECT m1.modelnumber,
+       m1.modelname,
+       m1.colour,
+       m2.modelnumber,
+       m2.modelname,
+       m2.colour
+FROM bmw m1
+JOIN bmw_audi b on m1.modelnumber = b.bmw_model 
+JOIN audi m2 on b.audi_model = m2.modelnumber;
+
+SELECT m1.modelnumber,
+       m1.modelname,
+       m1.colour,
+       m1.price,
+       m2.modelnumber,
+       m2.modelname,
+       m2.colour,
+       m2.price
+FROM bmw m1
+LEFT JOIN bmw_audi b ON m1.modelnumber=b.bmw_model
+LEFT JOIN audi m2 ON b.audi_model=m2.modelnumber;
+
+
+2.
+/* first we're creating a database */
+create database dataanalytics;
+
+/* everytime we have to run the database for output */
+use dataanalytics;
+
+/* creating a table */
+create table student(
+
+id int not null auto_increment primary key,
+name varchar(255) not null,
+address varchar(255) not null,
+phone bigint not null
+
+)auto_increment=101;/*if we don't give auto increment then it will start from 1 */
+
+/* inserting values into table */
+insert into student(name,address,phone) values
+("abdur","villupuram",9080570491),
+("tharun","pondy",7339292372),
+("sriram","villupuram",6384719720),
+("palani","coimbatore",8090470491);
+
+/* Select * is used to display whole table */
+select * from student;
+
+create table staffs(
+staff_id int not null auto_increment primary key,
+name varchar(255) not null,
+designation varchar(255) not null,
+salary bigint not null
+)auto_increment = 1001;
+
+insert into staffs(name,designation,salary) values
+("Anuu","Lab tech",18000),
+("Aaleeyaah","Admin",10000);
+
+select * from staffs;
+
+/* Alter table used to alter table like adding a new column in table and more*/
+alter table staffs /*line 38 to 45 won't run beacause we have changed the table name as staff_new below */
+add salary varchar(10); /*add keyword is used to add the column name in satff table*/
+
+
+/* update key word used to update the satff table */
+update staffs
+set salary="10000" /*set keyword is used to give value where we want to insert in table*/
+where staff_id=1002; /*where is used to define where we want to give the value*/
+
+insert into staffs(name,designation,salary) values
+("Smriti","Lab tech",20000),
+("rohit","Admin",25000),
+("tharun","Teacher",40000);
+
+update staffs
+set salary="18000"
+where staff_id=1001;
+
+select * from staffs;
+
+/*COMPARISON OPERATORS*/
+select * from staff_new where salary="18000"; /* equal to */ 
+
+select * from staff_new where staff_id !=1001; /* not equal to */
+
+select * from staffs where salary > "20000"; /* greater than */
+
+select * from staffs where salary < "26000"; /* less than */
+
+select * from staffs where salary >= "25000"; /* greater than equal to */
+
+select * from staffs where salary <= "25000"; /* less than equal to */
+
+/* Drop is used to delete the whole table*/
+drop table student;
+
+/* describe is used to show what we gave while creating a table */
+describe student;
+
+
+select name,designation,salary from staffs where designation="Lab Tech" and salary < "21000";
+select  designation,salary from staffs where salary between "22000" and "40000";
+
+
+
+
+delete from staffs where name="rohit";
+
+insert into staffs(name,designation,salary) values
+("harleen","Lab tech",40000),
+("divya","Admin",25000),
+("keerthi","Teacher",40000);
+/*--rename */
+alter table staffs rename to staff_new;
+
+select * from staff_new; 
+
+select name,designation,salary from staff_new limit 3;/* limit is used to show how many we want to see*/
+select * from staff_new order by salary desc limit 4;/* order by is used to display in order, desc means descending*/
+select * from staff_new order by name asc; /*here asc means ascending,it will display the values in ascending order*/
+select * from staff_new order by rand() limit 2; /* rand() is used to display values in random*/
+
+select concat('abdur','-','rahaman') as fita;/*concat is used to add two or more variables,here "as" is keyword and fita is temporary table*/
+select concat(name,'-',designation) as full_details from staff_new;/*here full_details is temporary table name */
+select concat(upper(name),'-',lower(designation)) as full_details from staff_new;/*upper() is used to display in uppercase and lower() is used to display in lowercase*/
+select staff_id,name,salary,salary*2/100 as bonus from staff_new;
+select name,salary,salary % 25 as bonus from staff_new;
+select name,salary,(salary+(salary*2/100)) as bonus from staff_new;
+select distinct(designation) from staff_new;/*distinct means unique it will show only unique will not display duplicates*/
+select count(*) from staff_new;/*count(*) is use display rows */
+select count(*) salary from staff_new;
+
+select name,salary from staff_new where salary<=40000 and salary>14000;
+select count(*) from staff_new where salary<=40000 and salary>14000;
+select name,salary from staff_new where not (salary>14000 and salary<=40000);
+select count(*) from staff_new where not (salary>14000 and salary<=40000);
+select count(designation) from staff_new where designation='Lab Tech';
+select count(designation) from staff_new;
+
+select max(salary),name from staff_new;
+select min(salary) from staff_new;
+select sum(salary) from staff_new;
+select avg(salary) from staff_new;
+
+select now() ;
+select curdate();
+select current_date();
+select current_timestamp();
+select current_time();
+
+select name,designation,salary from staff_new where staff_id in (1001,1003);
+
+/* if we give 'a%' then we search the name whether it start from a */
+select * from staff_new where name like 'a%';
+
+drop table staff_new;
+
+create table staff(
+staff_id int not null auto_increment primary key,
+name varchar(255) not null,
+designation varchar(255) not null,
+salary bigint not null
+)auto_increment = 1001;
+
+insert into staff(name,designation,salary) values
+("Anuu","Lab tech",18000),
+("Aaleeyaah","Admin",10000),
+("Virat","English",30000),
+("hardik","Biology",28000),
+("rohit","hindi",14000),
+("bumrah","lab tech",20000),
+("siraj","admin",9000),
+("sachin","english",31000),
+("abdur","biology",27000),
+("rahaman","hindi",20000);
+
+drop table staff;
+
+select * from staff;
+
+alter table staff rename to staff_new;
+select * from staff_new;
+
+insert into student(name,address,phone) values
+("kevin","villupuram","6484162901"),
+("Arjun", "Chennai", "9876543210"),
+("Rahul", "Coimbatore", "9123456780"),
+("Sanjay", "Bengaluru", "9988776655"),
+("Deepak", "Pune", "9090909090"),
+("Rohit", "Mumbai", "8765432190"),
+("Vignesh", "Madurai", "9445566778"),
+("Karthik", "Hyderabad", "9000012345"),
+("Sameer", "Kolkata", "8899776655"),
+("Praveen", "Delhi", "9812345678");
+
+select * from student;
+
+alter table student rename to students;
+select * from students;
+
+SELECT 
+staff_id,
+name,
+designation,
+salary,
+IF(salary>=30000,'High salary','Low salary') AS salary_level 
+FROM staff_new;
+
+select
+id,
+name,
+address,
+if(address="villupuram",'true','false') as city
+from students;
+
+/* IF with 3 levels using nested IF*/ 
+SELECT 
+    staff_id,
+    name,
+    salary,
+    IF(salary>=30000,
+		'very high',
+        IF(salary >= 25000,'medium','low')
+	)  AS salary_category
+FROM staff_new;
+
+/*CASE*/
+select
+     staff_id,
+     name,
+     salary,
+     CASE
+         WHEN salary >=30000 THEN 'VERY HIGH'
+         WHEN salary >=25000 THEN 'MEDIUM'
+         WHEN salary >=15000 THEN 'NORMAL'
+         ELSE 'LOW'
+	END AS salary_band
+from staff_new;
+
+select 
+staff_id,
+designation,
+salary,
+if(designation='english' and salary >=30000,
+   'star english staff',
+   'normal staff') as staff_type
+from staff_new;
+
+select 
+staff_id,
+designation,
+salary,
+if(designation='Admin' or designation='lab tech',
+   'support staff',
+   'teaching staff') as category
+from staff_new;
+
+select 
+staff_id,
+name,
+IFNULL(salary,0) as safe_salary
+from staff_new;
+
+select name,designation,salary 
+from staff_new
+where salary between 24000 and 35000;
+
+select name,designation from staff_new where designation like 'b%';
+select * from staff_new where name like 'a%';
+
+SELECT 
+    staff_id,
+    name,
+    salary,
+    IF(salary>=30000,
+		'very high',
+        IF(salary >= 25000,'medium',
+           IF(salary>=15000,'low','lowest')
+	 ))AS salary_category
+FROM staff_new;
+
+/* <> - this symbol denotes not equal to */
+select name,designation,salary from staff_new
+where designation <> 'admin' and salary > 21000;
+
+/*grouping : total salary paid for each designation*/
+select designation,
+count(*) as staff_count,
+sum(salary) as total_salary,
+avg(salary) as avg_salary
+from staff_new
+group by designation;
+
+/* having */
+select designation,
+avg(salary) as avg_salary
+from staff_new
+group by designation
+having avg(salary) >25000;
+
+select staff_id,name,designation,salary
+from staff_new
+where salary > (
+select avg(salary) 
+from staff_new
+);
+
+select staff_id,name,designation,salary
+from staff_new
+where salary =(
+select max(salary) 
+from staff_new 
+);
+
+select s1.staff_id,s1.name,s1.designation,s1.salary
+from staff_new s1
+where s1.salary > (
+select avg(s2.salary)
+from staff_new s2
+where s2.designation =s1.designation
+);
+select avg(salary) from staff_new;
+
+/*MAP*/
+CREATE  TABLE students_staff_map (
+map_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+student_id INT NOT NULL,
+staff_id INT NOT NULL,
+FOREIGN KEY (student_id) REFERENCES students(id),
+FOREIGN KEY (staff_id) REFERENCES staff_new(staff_id)
+);
+select * from students_staff_map;
+ insert into students_staff_map (student_id,staff_id) values
+ (101, 1001),
+ (102, 1002),
+ (103, 1003),
+ (104, 1004),
+ (105, 1005),
+ (106, 1006),
+ (107, 1007),
+ (108, 1008),
+ (109, 1009);
+ 
+ select st.id,
+		st.name,
+        st.address,
+        sf.staff_id,
+        sf.name AS staff_name,
+        sf.designation
+FROM students st 
+JOIN students_staff_map m ON st.id = m.student_id 
+JOIN staff_new sf ON m.staff_id = sf.staff_id;
+
+SELECT st.id,st.name AS student_name,st.address,
+	   sf.staff_id,sf.name AS staff_name,sf.designation
+FROM students st 
+LEFT JOIN students_staff_map m ON st.id = m.student_id
+LEFT JOIN staff_new sf ON m.staff_id = sf.staff_id;
+
+SELECT st.id,
+       st.name,
+       st.address,
+       sf.staff_id,
+       sf.name,
+       sf.designation 
+FROM students st
+RIGHT JOIN students_staff_map m ON st.id = m.student_id
+RIGHT JOIN staff_new sf ON m.staff_id = sf.staff_id;
+ 
+3.
+
+create database hospital;
+use hospital;
+
+select * from Hospital_record;
+
+select count(*) Admission_Date from Hospital_record;
+
+select * from Hospital_record where outcome ="Referred";
+
+
+SELECT 
+    h1.Doctor_ID,
+    h1.Doctor_Name,
+    h1.Treatment_Type
+FROM hospital_record h1
+ORDER BY h1.Doctor_ID desc;
+
+SELECT DISTINCT
+    Doctor_ID,
+    Doctor_Name,
+    Treatment_Type
+FROM hospital_record
+ORDER BY Doctor_ID;
+
+SELECT Doctor_ID,
+	   count(*) as Total_Doc_id
+FROM hospital_record h1
+GROUP BY Doctor_ID;
+
+SELECT 
+    Doctor_ID,
+    Doctor_Name,
+    Count(Patient_ID) as total_patients
+FROM hospital_records
+WHERE Doctor_Name <> "General Doctor"
+GROUP BY Doctor_ID, Doctor_Name
+ORDER BY total_patient desc;
+
+SELECT 
+    Doctor_ID,
+    Doctor_Name,
+    AVG(Wait_Time_Minutes) AS avg_wait_time
+FROM hospital_record
+GROUP BY Doctor_ID, Doctor_Name
+ORDER BY avg_wait_time DESC;
+
+SELECT 
+    Doctor_ID,
+    Doctor_Name,
+    Department,
+    count(Patient_ID) as Total_Patient
+FROM hospital_record
+GROUP BY Doctor_ID,Doctor_Name,Department
+ORDER BY Total_Patient asc;
+ 
+SELECT 
+    YEAR(Admission_Date) AS year,
+    MONTH(Admission_Date) AS month,
+    COUNT(*) AS total_admissions,
+    CASE 
+        WHEN COUNT(*) >= 6600 THEN "PEAK MONTH"
+        WHEN COUNT(*) >= 6300 THEN "AVERAGE MONTH"
+        ELSE "LOW MONTH"
+    END AS MOST_ADMISSONED_MONTH
+FROM hospital_record
+GROUP BY YEAR(Admission_Date), MONTH(Admission_Date)
+ORDER BY year, month;
+
+4.
+create database Employees;
+use Employees;
+create table Employee(
+Employee_id int not null auto_increment primary key,
+Empname varchar(255) not null,
+age int not null,
+Designation varchar(255) not null,
+Address varchar(255) not null,
+phone bigint not null,
+salary bigint not null,
+PF bigint not null
+) auto_increment=1001;
+
+insert into Employee (Empname,Age,Designation,Address,Phone,salary,PF) values
+("Abdur",22,"Data Analyst","Villupuram",9080570491,80000,3000),
+("Tharun",22,"SAP","Chennai",7339292372,70000,4000),
+("Palani",24,"Engineer","Coimbatore",6384719720,60000,2000),
+("Sriram",24,"Developer","Villupuram",6384719821,66000,2500),
+("Raj",27,"SAP","Pondy",6384713781,55000,2500),
+("Virat",32,"Data Analyst","Banglore",7339292567,90000,4000),
+("karthi",21,"Developer","Pondy",9080572738,50000,2500),
+("Mano",26,"Networking","Chennai",9080570492,60000,3500),
+("Arif",30,"SAP","Banglore",9080578254,98000,4500),
+("Rohit",37,"Engineer","Mumbai",9080570982,120000,5500),
+("Ameen",35,"Data Analyst","Villupuram",8056906788,145000,6000),
+("Saadh",21,"Accounts","Mumbai",7338282472,40000,2500),
+("Shreyas",32,"SAP","Banglore",9270057825,98000,4500),
+("Rohit",27,"Engineer","Mumbai",9384570982,80000,5500),
+("Hardik",31,"Data Analyst","Villupuram",8302906788,145000,6000),
+("Tilak",21,"Accounts","Mumbai",7338249247,40000,2500);
+
+select * from Employee;
+select * from Employee where Designation="Data Analyst";
+select * from Employee where salary>70000;
+select * from Employee Where Designation="Data Analyst" AND Salary >85000;
+
+alter table Employee
+add tax bigint;
+
+update Employee 
+set tax=12
+where Employee_id=1007;
+
+alter table employee rename to HRdata;
+select * from HRdata;
+describe HRdata;
+
+select employee_id,empname,age,address,
+if(address="villupuram",'vpm','no'),
+if(address="mumbai",'mum','no')
+from hrdata;
+
+select employee_id,empname,age,address,
+case
+when address="villupuram" then "vpm"
+when address="mumbai" then "mum"
+else 'no' 
+end as city
+from hrdata;
+
+alter table hrdata rename to employee;
+
+5. 
+create database newemployee;
+use newemployee;
+
+create table Employee(
+employee_id bigint not null auto_increment primary key,
+first_name varchar(20) not null,
+last_name varchar(20) not null,
+email varchar(20) not null,
+phone_number varchar(20) not null,
+hire_date date not null,
+job_id varchar(20) not null,
+salary bigint not null,
+commission_pct bigint not null,
+manager_id bigint not null,
+department_id bigint not null
+) auto_increment=1001;
+
+INSERT INTO Employee 
+(first_name, last_name, email, phone_number, hire_date, job_id, salary, commission_pct, manager_id, department_id)
+VALUES
+/*Manager_id = DA (Data Analyst) - 3001,SAP - 3002,ENG (Engineer) - 3003,DEV (Developer) - 3004,ACC (Accounts) - 3005,NET (Networking) - 3006*/
+/*department_id = DA-10 , SAP-20 , ENG-30, DEV-40, ACC-50 ,NET-60*/
+("Abdur","Rahaman", "abdur@gmail.com",9080570491,"2023-02-10","DA",80000,10,3001,10),
+("Tharun","Raj", "tharun@gmail.com",7339292372,"2024-05-14","SAP",70000,10,3002,20),
+("Palani","Raja", "palani@gmail.com",6384719720,"2022-08-21","ENG",60000,10,3003,30),
+("Sriram","chand", "sriram@gmail.com",6384719821,"2021-11-19","DEV",66000,10,3004,40),
+("Raj","bawa", "raj@gmail.com",6384713781,"2023-09-12","SAP",55000,10,3002,20),
+("Virat","kohli", "virat@gmail.com",7339292567,"2025-01-03","DA",90000,10,3001,10),
+("karthi","keyan", "karthi@gmail.com",9080572738,"2023-07-25","DEV",50000,10,3004,40),
+("Mano","bala", "mano@gmail.com",9080570492,"2022-03-30","NET",60000,10,3006,60),
+("Arif","shaikh", "arif@gmail.com",9080578254,"2021-06-11","SAP",98000,10,3002,20),
+("Rohit","sharma", "rohit1@gmail.com",9080570982,"2025-02-05","ENG",120000,10,3003,30),
+("Ameen","khan", "ameen@gmail.com",8056906788,"2024-12-20","DA",145000,10,3001,10),
+("Saadh","mohammed", "saadh@gmail.com",7338282472,"2021-09-09","ACC",40000,10,3005,50),
+("Shreyas","iyer", "shreyas@gmail.com",9270057825,"2022-10-14","SAP",98000,10,3002,20),
+("Rohit","singh", "rohit2@gmail.com",9384570982,"2023-04-27","NET",80000,10,3006,60),
+("Hardik","pandya", "hardik@gmail.com",8302906788,"2024-11-22","DA",145000,10,3001,10),
+("Tilak","varma", "tilak@gmail.com",7338249247,"2022-05-08","ACC",40000,10,3005,50);
+
+select * from employee;
+
+select first_name,job_id,manager_id from employee where manager_id=3001;
+select min(salary) from employee where job_id="DA";/*80000*/
+select max(salary) from employee where job_id="DA";/*145000*/
+
+select min(salary) from employee where job_id="SAP";/*55000*/
+select max(salary) from employee where job_id="SAP";/*98000*/
+
+select min(salary) from employee where job_id="ENG";/*60000*/
+select max(salary) from employee where job_id="ENG";/*120000*/
+
+select min(salary) from employee where job_id="DEV";/*50000*/
+select max(salary) from employee where job_id="DEV";/*66000*/
+
+select min(salary) from employee where job_id="ACC";/*40000*/
+select max(salary) from employee where job_id="ACC";/*40000*/
+
+select min(salary) from employee where job_id="NET";/*60000*/
+select max(salary) from employee where job_id="NET";/*80000*/
+
+
+
+
+create table jobs (
+job_id varchar(20) not null primary key,
+job_title varchar(20) not null,
+min_salary bigint not null,
+max_salary bigint not null
+);
+
+insert into jobs(job_id,job_title,min_salary,max_salary) values
+("DA", "Data Analyst", 80000, 145000),
+("SAP", "SAP ", 55000, 98000),
+("ENG", "Engineer", 60000, 120000),
+("DEV", "Developer", 50000, 66000),
+("ACC", "Accounts", 40000, 40000),
+("NET", "Networking", 60000, 80000);
+
+select * from jobs;
+select job_title,min_salary from jobs order by min_salary desc;
+select job_id,max_salary from jobs order by max_salary asc;
+
+create table job_history (
+employee_id bigint not null auto_increment primary key,
+start_date date not null ,
+end_date date not null,
+job_id varchar(20) not null,
+department_id bigint not null
+) auto_increment=1001;
+
+insert into job_history(start_date,end_date,job_id,department_id) values
+('2022-02-09', '2023-02-09', 'DA', 10),     
+('2023-05-13', '2024-05-13', 'SAP', 20),    
+('2021-08-20', '2022-08-20', 'ENG', 30),    
+('2020-11-18', '2021-11-18', 'DEV', 40),   
+('2022-09-11', '2023-09-11', 'SAP', 20),   
+('2024-01-02', '2025-01-02', 'DA', 10),     
+('2022-07-24', '2023-07-24', 'DEV', 40),    
+('2021-03-29', '2022-03-29', 'NET', 60),    
+('2020-06-10', '2021-06-10', 'SAP', 20),   
+('2024-02-04', '2025-02-04', 'ENG', 30),    
+('2023-12-19', '2024-12-19', 'DA', 10),     
+('2020-09-08', '2021-09-08', 'ACC', 50),    
+('2021-10-13', '2022-10-13', 'SAP', 20),   
+('2022-04-26', '2023-04-26', 'NET', 60),    
+('2023-11-21', '2024-11-21', 'DA', 10),     
+('2021-05-07', '2022-05-07', 'ACC', 50);    
+
+select * from job_history;
+select employee_id,start_date from job_history where start_date > '2023-02-09';
+select distinct(job_id) from job_history;
+select count(distinct job_id ) from job_history;
+
+create table job_grades(
+grade_level varchar(2) not null primary key,
+lowest_sal bigint not null,
+highest_sal bigint not null
+);
+
+insert into job_grades(grade_level,lowest_sal,highest_sal) values
+('A', 120000, 150000),
+('B', 90000, 120000),
+('C', 70000, 90000),
+('D', 50000, 70000),
+('E', 30000, 50000);
+
+select * from job_grades;
+
+select grade_level from job_grades where lowest_sal<=80000;
+
+create table departments(
+department_id bigint not null primary key,
+department_name varchar(30) not null,
+manager_id bigint not null,
+location_id bigint not null
+);
+
+insert into departments(department_id,department_name,manager_id,location_id) values
+(10,"data analyst",3001,100),
+(20,"SAP",3002,101),
+(30,"engineer",3003,102),
+(40,"developer",3004,103),
+(50,"accounts",3005,104),
+(60,"networking",3006,105);
+
+select * from departments;
+
+create table locations(
+location_id bigint not null auto_increment primary key,
+street_address varchar(25) not null,
+postal_code varchar(12) not null,
+city varchar(25) not null,
+state_province varchar(25) not null,
+country_id bigint not null
+) auto_increment=101;
+
+INSERT INTO locations (street_address, postal_code, city, state_province, country_id) VALUES
+('123 MG Road', '600001', 'Chennai', 'Tamil Nadu', 1),
+('55 Park Street', '700016', 'Kolkata', 'West Bengal', 1),
+('50 George Street', '2000', 'Sydney', 'New South Wales', 4),
+('120 Collins Street', '3000', 'Melbourne', 'Victoria', 4),
+('89 Brigade Road', '560001', 'Bengaluru', 'Karnataka', 1),
+('742 Evergreen Terrace', '62704', 'Springfield', 'Illinois', 2),
+('10 Downing Street', 'SW1A 2AA', 'London', 'England', 3),
+('221B Baker Street', 'NW1 6XE', 'London', 'England', 3),
+('1600 Market Street', '19103', 'Philadelphia', 'Pennsylvania', 2),
+('500 5th Avenue', '10036', 'New York', 'New York', 2),
+('233 Castro Street', '94041', 'Mountain View', 'California', 2),
+('12 King Street', 'M2 6AW', 'Manchester', 'England', 3),
+('45 Queen Road', 'G1 3SL', 'Glasgow', 'Scotland', 3),
+('210 Marine Drive', '400020', 'Mumbai', 'Maharashtra', 1),
+('80 Adelaide Street', '4000', 'Brisbane', 'Queensland', 4),
+('200 Jasper Ave', 'T5J 1T7', 'Edmonton', 'Alberta', 5);
+
+select * from locations;
+
+select street_address,city,state_province from locations where location_id in(101,104);
+
+6.
+create database task;
+use task;
+
+CREATE TABLE students (
+id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+name VARCHAR(255) NOT NULL,
+address VARCHAR(255) NOT NULL
+);
+
+INSERT INTO students(name,address) values
+("Abdur","villuupuram"),
+("Aaleeyaah","villupuram"),
+("Anuu","chennai"),
+("Tharun","banglore"),
+("Sriram","coimbatore"),
+("Palani","coimbatore"),
+("Karthi","pondy"),
+("Ameen","chennai"),
+("Mano","banglore"),
+("Arif","pondy");
+
+select * from students order by  name asc ;
+
+CREATE TABLE staffs (
+staff_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+staff_name VARCHAR(255) NOT NULL,
+designation VARCHAR(255) NOT NULL
+)auto_increment=101;
+
+INSERT INTO staffs (staff_name, designation) VALUES
+('Arun','trainer'),
+('Meena','trainer'),
+('Suresh','admin'),
+('Priya','trainer'),
+('Rahul','admin'),
+('Kavya','admin'),
+('Vignesh','admin'),
+('Lakshmi','trainer'),
+('Manoj','accountant'),
+('Hardik','trainer'),
+('Nisha','accountant'),
+('Jadeja','admin');
+
+
+ select * from staffs;
+
+CREATE TABLE students_staffs_map (
+map_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+stu_id INT NOT NULL,
+staf_id INT NOT NULL,
+FOREIGN KEY (stu_id) REFERENCES students(id),
+FOREIGN KEY (staf_id) REFERENCES staffs(staff_id)
+);
+
+INSERT INTO students_staffs_map(stu_id,staf_id) VALUES
+(1,101),
+(2,102),
+(3,103),
+(4,104),
+(5,105),
+(6,106),
+(7,107),
+(8,108),
+(9,109),
+(10,110);
+
+SELECT * FROM students_staffs_map;
+
+SELECT st.id,
+	   st.name,
+       st.address,
+       
+       sf.staff_id,
+       sf.staff_name,
+       sf.designation ,
+       
+IF (sf.designation ="trainer","teaching staff",
+IF(sf.designation='admin','administrative staff','others') 
+)as staff_category,
+IF (sf.staff_id IS NOT NULL,'assigned','not assigned') AS appointed,
+(SELECT COUNT(*) appointed) AS teacher_student_pair
+FROM students st 
+JOIN students_staffs_map ssm ON st.id = ssm.stu_id
+JOIN staffs sf               ON ssm.staf_id = sf.staff_id
+WHERE EXISTS (
+    SELECT 1
+    FROM students_staffs_map ssm
+    WHERE ssm.stu_id = st.id
+)
+GROUP BY st.id, sf.staff_id
+
+HAVING teacher_student_pair >= 1
+
+ORDER BY st.name ASC
+
+LIMIT 10;
+
+;
+
+
+
+
+SELECT 
+    st.id AS student_id,
+    st.name AS student_name,
+    st.address,
+
+    sf.staff_id,
+    sf.staff_name AS staff_name,
+    sf.designation,
+
+    -- CASE for conditional output
+    CASE 
+        WHEN sf.designation = 'Trainer' THEN 'Teaching Staff'
+        WHEN sf.designation = 'Admin'   THEN 'Administrative Staff'
+        ELSE 'Other Staff'
+    END AS staff_category,
+
+    -- Subquery: how many students this staff manages
+    (
+        SELECT COUNT(*)
+        FROM students_staffs_map m2
+        WHERE m2.staf_id = sf.staff_id
+    ) AS total_students_under_staff,
+
+    -- IF condition
+    IF(
+        sf.staff_id IS NULL, 
+        'Not Assigned', 
+        'Assigned'
+    ) AS staff_status
+
+FROM students st
+
+-- LEFT JOIN so all students appear
+LEFT JOIN students_staffs_map m ON st.id = m.stu_id
+LEFT JOIN staffs sf        ON m.staf_id = sf.staff_id
+
+-- Filtering using EXISTS (subquery)
+WHERE EXISTS (
+    SELECT 1
+    FROM students_staffs_map m3
+    WHERE m3.stu_id = st.id
+)
+
+-- Grouping for aggregated analysis
+GROUP BY st.id, sf.staff_id
+
+-- HAVING constraint (applied after grouping)
+HAVING total_students_under_staff >= 1
+
+-- Sorted report
+ORDER BY student_name ASC
+
+LIMIT 10;
+
+7.
+create database task5_1;
+use task5_1;
+
+create table customers (
+customer_id int not null auto_increment primary key,
+customer_name varchar(25) not null
+);
+
+create table products (
+product_id int not null auto_increment primary key,
+product_name varchar(25) not null,
+price int not null
+)auto_increment=101;
+
+create table orders (
+order_id int not null auto_increment primary key,
+customer_id int not null,
+product_id int not null,
+foreign key (customer_id) references customers(customer_id),
+foreign key (product_id) references products(product_id)
+)auto_increment=1001;
+
+
+create table total_order_amounts (
+ordered_item_id int not null auto_increment primary key,
+customer_id int not null,
+order_id int not null,
+product_id int not null,
+quantity int not null,
+price int not null,
+foreign key (customer_id) references customers(customer_id),
+foreign key (order_id) references orders(order_id),
+foreign key (product_id) references products(product_id)
+);
+insert into customers(customer_name) values
+('Rohit Sharma'),
+('Aisha Khan'),
+('Vikram Rao'),
+('Sneha Patel'),
+('Manoj Kumar');
+select * from customers; 
+
+insert into products(product_name, price) values
+('Laptop',20000),
+('Smartphone',15000),
+('Headphones',500),
+('Smartwatch',1000);
+select * from products;
+
+insert into orders (customer_id,product_id) values
+(1,101),
+(1,102),
+(1,103),
+(2,102),
+(3,101),
+(3,102),
+(4,103),
+(5,101),
+(5,103);
+
+INSERT INTO total_order_amounts (customer_id, order_id, product_id,quantity, price) VALUES
+(1, 1001, 101,1, 20000),
+(1, 1002, 102,2, 15000),
+(1, 1003, 103,1, 500),
+(2, 1004, 102,2, 15000),
+(3, 1005, 101, 1,20000),
+(3, 1006, 102, 1,15000),
+(4, 1007, 103,3, 500),
+(5, 1008, 101, 4,20000),
+(5, 1009, 103,2, 500);
+
+
+SELECT 
+    c.customer_id,
+    c.customer_name,
+    o.product_id,
+    o.order_id,
+
+    (
+        SELECT COUNT(DISTINCT o2.product_id)
+        FROM orders o2
+        WHERE o2.customer_id = c.customer_id
+    ) AS unique_items,
+(
+SELECT COUNT(*)
+from( select o.customer_id
+from orders o
+group by o.customer_id
+having COUNT(DISTINCT o.product_id) >= 2
+) as t
+) as two_or_more
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+;
+
+8.
+create database median_salary;
+use median_salary;
+
+create table employees (
+emp_id int not null auto_increment primary key,
+emp_name varchar(25) not null
+);
+
+INSERT INTO employees (emp_name) VALUES
+('Rohit Sharma'),
+('Meera Krishnan'),
+('Santhosh Kumar'),
+('Aisha Rahman'),
+('Vikram Singh'),
+('Priya Nair'),
+('Jatin Verma'),
+('Farhan Ali'),
+('Nisha Reddy'),
+('Lavanya Devi'),
+('Arjun Malhotra'),
+('Sneha Kapoor'),
+('Karthik Raj'),
+('Ananya Shree'),
+('Praveen Kumar'),
+('Ritika Shah'),
+('Harish Yadav'),
+('Divya Patel'),
+('Sagar Joshi'),
+('Manish Gupta');
+
+select * from employees;
+
+create table  departments (
+dept_id int not null auto_increment primary key,
+dept_name varchar(25) not null,
+emp_id int not null,
+salary int not null,
+foreign key (emp_id) references employees(emp_id)
+)auto_increment=101;
+
+INSERT INTO departments (dept_name, emp_id, salary) VALUES
+('IT', 1, 65000),
+('HR', 2, 48000),
+('Sales', 3, 52000),
+('Finance', 4, 70000),
+('IT', 5, 72000),
+('HR', 6, 46000),
+('Sales', 7, 55000),
+('Finance', 8, 68000),
+('IT', 9, 61000),
+('HR', 10, 49000),
+('Sales', 11, 53000),
+('Finance', 12, 71000),
+('IT', 13, 69000),
+('HR', 14, 47000),
+('Sales', 15, 56000),
+('Finance', 16, 73000),
+('IT', 17, 64000),
+('HR', 18, 50000),
+('Sales', 19, 54000),
+('Finance', 20, 72000);
+
+select * from departments group by emp_id,dept_id; 
+
+SELECT AVG(salary) AS median_salary
+FROM (
+    SELECT salary,
+           ROW_NUMBER() OVER (ORDER BY salary) AS rn,
+           COUNT(*) OVER () AS cnt
+    FROM departments
+) t
+WHERE rn IN ((cnt + 1) / 2, (cnt + 2) / 2);
+
+SELECT
+    e.emp_id,
+    e.emp_name,
+    d.dept_id,
+    d.dept_name,
+    d.salary,
+    CASE
+        WHEN d.salary > (SELECT AVG(salary) FROM departments)
+        THEN 'HIGH PERFORMER'
+        ELSE 'LOW PERFORMER'
+    END AS performance
+FROM departments d
+JOIN employees e ON e.emp_id = d.emp_id;
+
+SELECT 
+    d.dept_name,
+    d.salary,
+    (SELECT COUNT(*) 
+     FROM departments d1 
+     WHERE d1.dept_name = d.dept_name
+    ) AS total
+FROM departments d;
+
+
+
+(select total_emp > 3) as total;
+
+
+            
+
+select avg(salary) from departments;
+
+
+
+
+9.
+
+create database task6;
+use task6;
+
+CREATE TABLE categories (
+    category_id INT PRIMARY KEY AUTO_INCREMENT,
+    category_name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE products (
+    product_id INT PRIMARY KEY AUTO_INCREMENT,
+    product_name VARCHAR(50) NOT NULL,
+    price INT NOT NULL,
+    category_id INT,
+    FOREIGN KEY (category_id) REFERENCES categories(category_id)
+);
+
+INSERT INTO categories (category_name) VALUES
+('Electronics'),
+('Fashion'),
+('Home Appliances'),
+('Sports'),
+('Books'),
+('Furniture'),
+('Toys'),
+('Beauty');
+
+INSERT INTO products (product_name, price, category_id) VALUES
+-- Electronics
+('Laptop', 75000, 1),
+('Mobile', 45000, 1),
+('Tablet', 30000, 1),
+('Headphones', 8000, 1),
+('Smart Watch', 20000, 1),
+
+-- Fashion
+('Jeans', 3000, 2),
+('Shirt', 2000, 2),
+('Jacket', 6000, 2),
+('Shoes', 5000, 2),
+('Watch', 7000, 2),
+
+-- Home Appliances
+('Washing Machine', 28000, 3),
+('Refrigerator', 35000, 3),
+('Microwave', 15000, 3),
+('Mixer', 7000, 3),
+
+-- Sports
+('Cricket Bat', 4500, 4),
+('Football', 2500, 4),
+('Tennis Racket', 6000, 4),
+('Gym Dumbbells', 8000, 4),
+
+-- Books
+('Novel', 600, 5),
+('Biography', 800, 5),
+('Comics', 500, 5),
+('Textbook', 1200, 5),
+
+-- Furniture
+('Sofa', 40000, 6),
+('Dining Table', 35000, 6),
+('Chair', 7000, 6),
+('Bed', 45000, 6),
+
+-- Toys
+('Toy Car', 1200, 7),
+('Doll', 1500, 7),
+('Puzzle', 800, 7),
+('Remote Helicopter', 3500, 7),
+
+-- Beauty
+('Face Cream', 1200, 8),
+('Perfume', 3500, 8),
+('Makeup Kit', 5000, 8),
+('Hair Dryer', 2800, 8);
+
+SELECT 
+    c.category_id,
+    c.category_name,
+    COUNT(p.product_id) AS total_products,
+    AVG(p.price) AS average_price,
+    (SELECT AVG(price) FROM products) AS overall_avg_price,
+	MAX(p.price) AS top_price,
+CASE  
+	 WHEN AVG(p.price) > (SELECT AVG(p.price) FROM products p)
+     THEN 'LUXURY'
+     ELSE 'BUDGET'
+END AS product_type
+FROM categories c
+JOIN products p ON c.category_id = p.category_id
+GROUP BY c.category_id,c.category_name
+HAVING COUNT(p.product_id) >4
+AND
+    SUM(p.price) >
+    (
+        SELECT AVG(total_sales)
+        FROM (
+            SELECT SUM(price) AS total_sales
+            FROM products
+            GROUP BY category_id
+        ) x
+    )
+;
+
+
+
+
+
+10.
+create database testcase1;
+use testcase1;
+
+create table customers (
+customer_id int not null auto_increment primary key,
+customer_name varchar(25) not null,
+city varchar(25) not null
+);
+
+insert into customers (customer_name,city) values
+('Abdur','chennai'),
+('Aaleeyaah','chennai'),
+('Anuu','banglore'),
+('virat','banglore'),
+('hardik','mumbai');
+
+select * from customers;
+
+create table products(
+product_id int not null auto_increment primary key,
+product_name varchar(25) not null,
+price int not null
+)auto_increment=101;
+
+insert into products(product_name,price) values
+('laptop',40000),
+('mouse',1000),
+('speakers',25000),
+('keyboard',3000),
+('GPU',50000);
+select * from products;
+
+create table sales(
+sales_id int not null auto_increment primary key,
+customer_id int not null,
+product_id int not null,
+quantity int not null,
+foreign key (customer_id) references customers(customer_id),
+foreign key (product_id) references products(product_id)
+)auto_increment=1001;
+
+insert into sales(customer_id,product_id,quantity) values
+(1,101,2),
+(1,102,1),
+(2,103,1),
+(3,104,2),
+(4,105,2),
+(5,102,1),
+(5,103,2);
+
+select * from sales;
+
+SELECT 
+    c.customer_id,
+    c.customer_name,
+    COUNT(s.sales_id) AS total_orders,
+    SUM(p.price * s.quantity) AS total_amount_spent,
+    c.city,
+    CASE 
+        WHEN SUM(p.price * s.quantity) > 50000 THEN 'PLATINUM'
+        WHEN SUM(p.price * s.quantity) BETWEEN 25000 AND 50000 THEN 'GOLD'
+        ELSE 'SILVER'
+    END AS customer_type
+FROM sales s
+JOIN customers c ON s.customer_id = c.customer_id
+JOIN products p ON s.product_id = p.product_id
+WHERE c.city IN ('chennai', 'banglore')
+GROUP BY c.customer_id, c.customer_name, c.city
+ORDER BY total_amount_spent DESC;
+
+
+11.
+create database testcase2;
+use testcase2;
+
+CREATE TABLE customers (
+    customer_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    customer_name VARCHAR(50) NOT NULL
+);
+
+INSERT INTO customers (customer_name) VALUES
+('Abdur'),
+('Aaleeyaah'),
+('Anuu'),
+('Virat'),
+('Hardik');
+
+CREATE TABLE categories (
+    category_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    category_name VARCHAR(50) NOT NULL
+)auto_increment=101;
+
+INSERT INTO categories (category_name) VALUES
+('Electronics'),
+('Home Appliances'),
+('Sports'),
+('Fashion'),
+('Accessories');
+
+
+CREATE TABLE products (
+    product_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    product_name VARCHAR(50) NOT NULL
+)auto_increment=1001;
+
+INSERT INTO products (product_name) VALUES
+('Laptop'),
+('Mouse'),
+('Keyboard'),
+('Refrigerator'),
+('Football'),
+('Headphones'),
+('T-Shirt');
+
+
+CREATE TABLE orders (
+    order_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    category_id INT NOT NULL,
+    product_id INT NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+    FOREIGN KEY (category_id) REFERENCES categories(category_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+INSERT INTO orders (customer_id, category_id, product_id) VALUES
+(1, 101, 1001),  -- Laptop (Electronics)
+(2, 101, 1002),  -- Mouse (Electronics)
+(3, 102, 1004),  -- Refrigerator (Home Appliances)
+(4, 103, 1005),  -- Football (Sports)
+(5, 101, 1001);  -- Laptop (Electronics)
+
+
+SELECT 
+    p.product_id,
+    p.product_name,
+    c.category_name
+FROM products p
+JOIN categories c ON c.category_id = p.product_id + 100   -- (see note below)
+WHERE p.product_id NOT IN (
+    SELECT o.product_id
+    FROM orders o
+)
+AND c.category_name <> 'Accessories';
+
+
+12.
+create database testcase2;
+use testcase2;
+
+CREATE TABLE customers (
+    customer_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    customer_name VARCHAR(50) NOT NULL
+);
+
+INSERT INTO customers (customer_name) VALUES
+('Abdur'),
+('Aaleeyaah'),
+('Anuu'),
+('Virat'),
+('Hardik');
+
+CREATE TABLE categories (
+    category_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    category_name VARCHAR(50) NOT NULL
+)auto_increment=101;
+
+INSERT INTO categories (category_name) VALUES
+('Electronics'),
+('Home Appliances'),
+('Sports'),
+('Fashion'),
+('Accessories');
+
+
+CREATE TABLE products (
+    product_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    product_name VARCHAR(50) NOT NULL
+)auto_increment=1001;
+
+INSERT INTO products (product_name) VALUES
+('Laptop'),
+('Mouse'),
+('Keyboard'),
+('Refrigerator'),
+('Football'),
+('Headphones'),
+('T-Shirt');
+
+
+CREATE TABLE orders (
+    order_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    category_id INT NOT NULL,
+    product_id INT NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+    FOREIGN KEY (category_id) REFERENCES categories(category_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+INSERT INTO orders (customer_id, category_id, product_id) VALUES
+(1, 101, 1001),  -- Laptop (Electronics)
+(2, 101, 1002),  -- Mouse (Electronics)
+(3, 102, 1004),  -- Refrigerator (Home Appliances)
+(4, 103, 1005),  -- Football (Sports)
+(5, 101, 1001);  -- Laptop (Electronics)
+
+
+SELECT 
+    p.product_id,
+    p.product_name,
+    c.category_name
+FROM products p
+JOIN categories c ON c.category_id = p.product_id + 100   -- (see note below)
+WHERE p.product_id NOT IN (
+    SELECT o.product_id
+    FROM orders o
+)
+AND c.category_name <> 'Accessories';
+
+
+13.
+create database testcase4;
+use testcase4;
+
+create table suppliers (
+supplier_id int not null auto_increment primary key,
+supplier_name varchar(25) not null,
+city varchar(25) not null
+);
+
+insert into suppliers (supplier_name,city) values
+('Abdur','india'),
+('Aaleeyaah','india'),
+('Anuu','china'),
+('virat','london'),
+('hardik','china');
+
+create table products(
+product_id int not null auto_increment primary key,
+product_name varchar(25) not null,
+price int not null
+)auto_increment=101;
+
+insert into products(product_name,price) values
+('laptop',40000),
+('mouse',1000),
+('speakers',25000),
+('keyboard',3000),
+('GPU',50000);
+
+create table orders(
+order_id int not null auto_increment primary key,
+supplier_id int not null,
+product_id int not null,
+quantity int not null,
+foreign key (supplier_id) references suppliers(supplier_id),
+foreign key (product_id) references products(product_id)
+)auto_increment=1001;
+
+insert into orders(supplier_id,product_id,quantity) values
+(1,101,2),
+(1,102,1),
+(2,103,1),
+(3,104,2),
+(4,105,2),
+(5,102,1),
+(5,103,2);
+
+SELECT 
+    s.supplier_name,
+    COUNT(DISTINCT o.product_id) AS total_products_supplied,
+    SUM(p.price * o.quantity) AS total_revenue
+FROM orders o
+JOIN suppliers s 
+    ON o.supplier_id = s.supplier_id
+JOIN products p 
+    ON o.product_id = p.product_id
+WHERE s.city IN ('india', 'china')
+GROUP BY s.supplier_id, s.supplier_name
+HAVING SUM(p.price * o.quantity) > 10000
+ORDER BY total_revenue DESC;
+
+14.
+create database testcase6;
+use testcase6;
+
+CREATE TABLE customers (
+    customer_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    customer_name VARCHAR(50) NOT NULL
+);
+
+INSERT INTO customers (customer_name) VALUES
+('Abdur'),
+('Aaleeyaah'),
+('Anuu'),
+('Virat'),
+('Hardik');
+
+create table products(
+product_id int not null auto_increment primary key,
+product_name varchar(25) not null,
+price int not null
+)auto_increment=101;
+
+insert into products(product_name,price) values
+('laptop',40000),
+('mouse',1000),
+('speakers',25000),
+('keyboard',3000),
+('GPU',50000);
+
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY AUTO_INCREMENT,
+    customer_id INT,
+    product_id INT,
+    order_date DATE,
+    status VARCHAR(30),
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
+INSERT INTO orders (customer_id, product_id, order_date, status) VALUES
+(1, 101, '2025-04-10', 'completed'),
+(1, 105, '2025-04-15', 'completed'),
+(2, 103, '2025-04-20', 'completed'),
+(3, 102, '2025-04-25', 'pending'),
+(4, 104, '2025-05-01', 'completed'),
+(5, 105, '2025-05-05', 'completed');
+
+
+
+SELECT 
+    MONTH(o.order_date) AS month,
+    COUNT(o.order_id) AS total_orders,
+    SUM(p.price) AS total_revenue
+FROM orders o
+JOIN products p ON o.product_id = p.product_id
+WHERE YEAR(o.order_date) = YEAR(CURDATE())
+      AND o.status <> 'Cancelled'
+GROUP BY MONTH(o.order_date)
+HAVING SUM(p.price) > 20000
+ORDER BY month;
+
+14.
+create database testcase5;
+use testcase5;
+CREATE TABLE customers (
+    customer_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    customer_name VARCHAR(50) NOT NULL
+);
+
+INSERT INTO customers (customer_name) VALUES
+('Abdur'),
+('Aaleeyaah'),
+('Anuu'),
+('Virat'),
+('Hardik');
+
+CREATE TABLE orders (
+    order_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT not null,
+    total_amount INT not null,
+    paid_amount int not null,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+)auto_increment=101;
+INSERT INTO orders (order_id,customer_id, total_amount, paid_amount) VALUES
+(101,1,20000,20000),
+(102,2,18000,15000),
+(103,3,15000,14000),
+(104,4,17000,17000),
+(105,5,19000,0)
+;
+
+SELECT o.order_id,
+       c.customer_name,
+	   o.total_amount,
+       o.paid_amount,
+case
+       when o.total_amount = o.paid_amount then 'fully paid'
+       when o.paid_amount= '0' then'not_paid'
+       else 'partially paid'
+       end as payment
+from orders o
+join customers c on o.customer_id=c.customer_id
+having o.total_amount <> o.paid_amount;
+
+
+
+
+15.
+create database testcase9;
+use testcase9;
+CREATE TABLE customers (
+    customer_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    customer_name VARCHAR(50) NOT NULL
+);
+
+INSERT INTO customers (customer_name) VALUES
+('Abdur'),
+('Aaleeyaah'),
+('Anuu'),
+('Virat'),
+('Hardik');
+
+CREATE TABLE orders (
+    order_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT not null,
+    total_amount INT not null,
+    paid_amount int not null,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+)auto_increment=101;
+INSERT INTO orders (order_id,customer_id, total_amount, paid_amount) VALUES
+(101,1,210000,210000),
+(102,2,180000,150000),
+(103,3,150000,140000),
+(104,4,230000,107000),
+(105,5,19000,19000)
+;
+
+CREATE TABLE payments (
+    payment_id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT NOT NULL,
+    payment_mode VARCHAR(30) NOT NULL,
+    amount INT NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id)
+);
+
+INSERT INTO payments (order_id, payment_mode, amount) VALUES
+(101, 'Credit Card', 110000),
+(101, 'Credit Card', 100000),
+(102, 'UPI', 80000),
+(102, 'UPI', 70000),
+(103, 'Debit Card', 70000),
+(103, 'Debit Card', 70000),
+(104, 'Net Banking', 50000),
+(104, 'Net Banking', 57000),
+(105, 'Cash', 19000);
+
+SELECT 
+    p.payment_mode,
+    count(p.payment_id) as total_payments,
+    sum(p.amount) as total_amount,
+    CASE
+        WHEN SUM(p.amount) > 200000 THEN 'High Usage'
+        WHEN SUM(p.amount) BETWEEN 100000 AND 200000 THEN 'Medium Usage'
+        ELSE 'Low Usage'
+    END AS payment_rating
+from payments p
+group by p.payment_mode
+HAVING sum(p.amount) > 0;
+
+16.
+create database testcase10;
+use testcase10;
+CREATE TABLE customers (
+    customer_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    customer_name VARCHAR(50) NOT NULL
+);
+
+INSERT INTO customers (customer_name) VALUES
+('Abdur'),
+('Aaleeyaah'),
+('Anuu'),
+('Virat'),
+('Hardik');
+
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY AUTO_INCREMENT,
+    customer_id INT NOT NULL,
+    order_date DATE NOT NULL,
+    total_amount INT,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);
+
+INSERT INTO orders (customer_id, order_date, total_amount) VALUES
+(1, '2024-03-15', 12000),
+(1, '2025-01-20', 18000),
+
+(2, '2024-06-10', 15000),
+(2, '2025-02-05', 22000),
+
+(3, '2024-09-12', 17000),
+
+(4, '2025-03-18', 25000),
+
+(5, '2024-11-25', 9000),
+(5, '2025-04-02', 14000);
+
+select 
+    c.customer_name,
+    (select count(*) 
+     from orders o1 
+     where o1.customer_id = c.customer_id
+       and YEAR(o1.order_date) = YEAR(CURDATE()) - 1
+    ) as last_year_orders,
+    (select COUNT(*) 
+     from orders o2 
+     where o2.customer_id = c.customer_id
+       AND YEAR(o2.order_date) = YEAR(CURDATE())
+    ) as current_year_orders
+from customers c
+where c.customer_id in (
+    select customer_id
+    from orders
+    where YEAR(order_date) = YEAR(CURDATE()) - 1
+)
+and c.customer_id IN (
+    select customer_id
+    from orders
+    where YEAR(order_date) = YEAR(CURDATE())
+);
+
+17.
+create database second_high_salary;
+use second_high_salary;
+
+create table employees(
+emp_id int not null auto_increment primary key,
+emp_name varchar(25) not null,
+salary bigint not null
+);
+
+insert into employees(emp_name,salary)values
+('Abdur', 35000),
+('Aaleeyaah', 42000),
+('Anuu', 30000),
+('Virat', 55000),
+('Hardik', 60000);
+
+select salary from employees where in
+
+SELECT MAX(salary) AS second_highest_salary
+FROM employees
+WHERE salary < (
+    SELECT MAX(salary)
+    FROM employees
+);
+
+
+select salary from employees
+order by salary desc
+limit 1 ;
+
+select max(salary) 
+from employees
+where salary < (
+ select max(salary) 
+ from employees);
+
+18.
+create database dept_average_comparison;
+use dept_average_comparison;
+
+CREATE TABLE departments (
+    dept_id INT PRIMARY KEY,
+    dept_name VARCHAR(50)
+);
+INSERT INTO departments VALUES
+(10, 'HR'),
+(20, 'IT'),
+(30, 'Finance');
+
+CREATE TABLE employees (
+    emp_id INT PRIMARY KEY,
+    emp_name VARCHAR(50),
+    salary INT,
+    dept_id INT,
+    FOREIGN KEY (dept_id) REFERENCES departments(dept_id)
+);
+INSERT INTO employees VALUES
+(1, 'Abdur', 40000, 10),
+(2, 'Aaleeyaah', 60000, 10),
+(3, 'Anuu', 50000, 20),
+(4, 'Virat', 70000, 20),
+(5, 'Hardik', 80000, 30),
+(6, 'Rohit', 60000, 30);
+
+SELECT emp_id, emp_name, salary, dept_id
+FROM employees e
+WHERE salary > (
+    SELECT AVG(salary)
+    FROM employees
+    WHERE dept_id = e.dept_id
+);
+19.
+create database food_delivery;
+use food_delivery;
+
+create table orders (
+order_id int not null primary key,
+customer_name varchar(50),
+restaurant varchar(50),
+city varchar(50),
+order_time datetime,
+delivery_time int,
+order_value int,
+rating float,
+payment_type varchar(20),
+order_hour int,
+day varchar(15),
+delivery_speed varchar(20)
+);
+
+20.create database swiggy_test;
+use swiggy_test;
+
+select * from orders;
+
+21.
+Create database window_function;
+use window_function;
+
+Create table employee
+(
+emp_id int not null primary key,
+emp_name varchar(50) not null,
+dept_name varchar(50) not null,
+emp_salary bigint not null
+);
+insert into employee(emp_id, emp_name,dept_name, emp_salary)
+values(1, "Abdul", "admin",3000),
+(2, "Kala", "HR", 4000),
+(3, "Malathi", "Support", 5000),
+(4, "Ram", "HR", 7000),
+(5, "Kamali", "admin", 6000),
+(6, "Lali", "Support", 8000),
+(7, "Nisha", "HR", 3000),
+(8, "Uma", "Support", 8000),
+(9, "Tharan", "admin", 7000);
+
+select*from employee;
+
+
+
+-- max salary grouped by dept--
+select dept_name, max(emp_salary) 
+as max_salaries from employee
+group by dept_name;
+
+-- using windows function to find max salary --
+
+select e.*,
+max(emp_salary)
+over (partition by dept_name) as max_salary 
+from employee e;
+SELECT e.*,
+       MAX(emp_salary) OVER (PARTITION BY dept_name) AS max_salary
+FROM employee e;
+-- row number--
+
+select e.*,
+row_number() over(partition by dept_name)
+as rn from employee e;
+-- fetch the first 2 employees from each department to join the company--
+select*from(
+select e.*,
+row_number() over(partition by dept_name order by emp_id)
+as rn from employee e) x
+where x.rn>2;
+
+-- rank()--
+--fetch the top 2 employees in each dept earning themax salary --
+SELECT *
+FROM (
+    SELECT e.*,
+           RANK() OVER (PARTITION BY dept_name ORDER BY emp_salary DESC) AS rnk
+    FROM employee e
+) x
+WHERE x.rnk <= 2;
+-- dense rank--
+SELECT *
+FROM (
+    SELECT e.*,
+           RANK() OVER (PARTITION BY dept_name ORDER BY emp_salary DESC) AS rnk,
+           DENSE_RANK() OVER (PARTITION BY dept_name ORDER BY emp_salary DESC) AS rnks
+    FROM employee e
+) x
+;
+
+--rank will skip the value
+-- dense rank will not skip the value
+
